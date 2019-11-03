@@ -1,0 +1,242 @@
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.PostMethod;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+import net.hairi.Thales.*;
+import org.jpos.iso.packager.DummyPackager;
+import org.jpos.space.Space;
+import org.jpos.space.SpaceFactory;
+import org.jpos.q2.iso.*;
+import org.jpos.iso.*;
+import org.jpos.util.*;
+import org.jpos.space.TSpace;
+
+
+
+
+System.out.println("HTHALES RUNNING ===============xxxxxxxxxxxxxxxxx");
+
+  Space sp = SpaceFactory.getSpace("tspace:default");
+      
+HThalesCore core = new HThalesCore("localhost",  9998,"cfg/hsm-", "base");
+
+
+
+Vector v = new Vector();
+
+
+
+
+HThalesMsg req = core.createRequest("DW");
+
+req.set("zmk", "U1457FF6ADF6250C66C368416B4C9D383");
+req.set("cvk", "6A2C67C227784BC5D8508B6BED82ECB8");
+req.set("optiondata","0U1");
+req.set("trailerdata","1234567890");
+
+req.pack();
+
+
+
+req.dump(System.out, "req");
+
+sp.out("hthales-send", req);
+
+System.out.println("Sent to space");
+
+
+HThalesMsg rep = sp.in("hthales-receive", 30000);
+
+rep.dump(System.out,"rep");
+
+
+HThalesMsg req2 = core.createRequest("DY");
+
+req2.set("zmk", "U1457FF6ADF6250C66C368416B4C9D383");
+req2.set("bdk", "U8E3D3E2FD5919657F05A1AA90D32A014");
+req2.set("optiondata","X01");
+req2.set("trailerdata","1234567890");
+
+
+sp.out("hthales-send", req2);
+
+HThalesMsg rep2 = sp.in("hthales-receive", 10000);
+
+rep2.dump(System.out,"rep2");
+
+/*
+HThalesMsg req3 = core.createRequest("A6");
+req3.set("key-type", "002");
+
+req3.set("zmk", "4ED06495741C280C");
+req3.set("key-under-zmk", "35ED0C0EA7F7D0FA");
+req3.set("key-scheme","Z");
+req3.set("trailerdata","1234567890");
+
+req3.dump(System.out, "req3");
+
+sp.out("hthales-send", req3);
+
+
+
+HThalesMsg rep3 = sp.in("hthales-receive", 10000);
+
+rep3.dump(System.out,"rep4");
+
+
+*/
+
+HThalesMsg req4 = core.createRequest("A6");
+req4.set("key-type", "001");
+
+req4.set("zmk", "U71979DEB8587E2734F1E99D5DCAEF9AC");
+req4.set("key-under-zmk", "U482C4E722BB0CF1845E1E5BD16310119");
+req4.set("key-scheme","U");
+//req3.set("trailerdata","1234567890");
+
+req4.dump(System.out, "req3");
+
+sp.out("hthales-send", req4);
+
+HThalesMsg rep4 = sp.in("hthales-receive", 10000);
+
+rep4.dump(System.out,"rep3");
+
+
+
+   HThalesMsg req5 = core.createRequest("A0");
+         req5.set("mode", "0");
+//         req5.set("key-type", "001");
+    req5.set("key-type", "402");
+
+         req5.set("key-scheme-lmk", "Y");
+
+
+req5.dump(System.out, "req5");
+
+sp.out("hthales-send", req5);
+
+HThalesMsg rep5 = sp.in("hthales-receive", 10000);
+
+rep5.dump(System.out,"rep5");
+
+
+
+HThalesMsg req6 = core.createRequest("AS");
+
+//req6.set("data", "0U1");
+req6.set("data", "001");
+
+
+req6.dump(System.out, "req6");
+
+
+sp.out("hthales-send", req6);
+
+HThalesMsg rep6 = sp.in("hthales-receive", 10000);
+
+rep6.dump(System.out,"rep6");
+
+
+
+
+/* Some bug here 
+HThalesMsg req7 = core.createRequest("AU");
+
+req7.set("zmk", "4ED06495741C280C");
+req7.set("cvk", "0A61E674E88C6A7EEABC38C2B2BB492F");
+req7.set("optiondata", "ZU1");
+
+
+req7.dump(System.out, "req7");
+
+
+sp.out("hthales-send", req7);
+
+HThalesMsg rep7 = sp.in("hthales-receive", 10000);
+
+rep7.dump(System.out,"rep7");
+
+*/
+
+/* Some bug here 2
+HThalesMsg req8 = core.createRequest("AW");
+req8.set("zmk", "4ED06495741C280C");
+req8.set("cvk", "AB88EE604522372FDAA27A67A8CDADFA");
+req8.set("optiondata","0U0");
+
+req8.dump(System.out, "req8");
+
+
+sp.out("hthales-send", req8);
+
+HThalesMsg rep8 = sp.in("hthales-receive", 10000);
+
+rep8.dump(System.out,"rep8");
+
+*/
+
+
+HThalesMsg req9 = core.createRequest("CY");
+req9.set("cvk", "U9B4934384B19946B040CD702B4D58145");
+req9.set("acctnumber","5614123456789012345");
+req9.set("expdate", "8701");
+req9.set("svc", "101");
+
+req9.dump(System.out, "req9");
+
+
+sp.out("hthales-send", req9);
+
+HThalesMsg rep9 = sp.in("hthales-receive", 10000);
+
+rep9.dump(System.out,"rep9");
+
+
+
+
+
+HThalesMsg req10 = core.createRequest("DG");
+
+req10.set("pvk-pair", "UA8B1520E201412938388191885FFA50A");
+req10.set("pin", "01234");
+req10.set("account-number", "407000025321");
+req10.set("pvki", "1");
+
+req10.dump(System.out, "req10");
+
+
+sp.out("hthales-send", req10);
+
+HThalesMsg rep10 = sp.in("hthales-receive", 10000);
+
+rep10.dump(System.out,"rep10");
+
+
+
+
+
+
+
+HThalesMsg req11 = core.createRequest("JC");
+
+req11.set("source-tpk", "U8463435FC4B4DAA0C49025272C29B12C");
+req11.set("pin-block", "028DCC093FB0471F");
+req11.set("pin-block-format", "03");
+req11.set("account-number", "407000025321");
+
+
+
+req11.dump(System.out, "req11");
+
+
+sp.out("hthales-send", req11);
+
+HThalesMsg rep11 = sp.in("hthales-receive", 10000);
+
+rep11.dump(System.out,"rep11");
+
+

@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<schema id='B2'>
+<field id="length" type="N" length="4" />
+<field id="data" type="N" length="8" />
+
+</schema>

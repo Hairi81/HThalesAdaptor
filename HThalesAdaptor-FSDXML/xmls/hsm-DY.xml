@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<schema id='DY'>
+<field id='zmk' type='T' length='32'/>
+<field id='bdk' type='T' length='32'/>
+<field id='optiondata' type='OSS' length='3'/>
+<field id='trailerdata' type='OSC' length='10'/>
+</schema> 

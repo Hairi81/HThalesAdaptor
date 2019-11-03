@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<schema id='JC'>
+<field id='source-tpk' type='T' length='32'/>
+<field id='pin-block' type='A' length='16'/>
+<field id='pin-block-format' type='A' length='2'/>
+<field id='account-number' type='A' length='12'/>
+</schema> 

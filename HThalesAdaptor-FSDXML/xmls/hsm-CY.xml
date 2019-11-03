@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema id='CY'>
+<field id="cvk" type="T" length="32" />
+<field id="cvv" type="N" length="3" />
+<field id="acctnumber" type="NES" length="20" />
+<field id="expdate" type="N" length="4" />
+<field id="svc" type="N" length="3" />
+</schema>

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<schema id='DG'>
+<field id='pvk-pair' type='T' length='32'/>
+<field id='pin' type='N' length='5'/>
+<field id='account-number' type='N' length='12'/>
+<field id='pvki' type='N' length='1'/>
+</schema> 

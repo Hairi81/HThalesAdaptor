@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema id='AS'>
+<!--Data option fields in action, with predelimiter ;"-->
+<field id="data" type="OSS" length="3" />
+</schema>

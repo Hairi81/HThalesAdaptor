@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema id='A1'>
+<!--this is the LMK check value-->
+<field id="generatedkey" type="T" length="16" />
+<!--this is the firmware number-->
+<field id="checkvalue" type="A" length="6" />
+</schema>

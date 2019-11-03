@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
+<schema>
+<field id='command' type='A' length='2' key='true'/>
+</schema>

@@ -1,0 +1,418 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- Place this tag in your head or just before your close body tag -->
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Java Thales HSM Library</title>
+<link href="../twoColElsLtHdr.css" rel="stylesheet" type="text/css" /><!--[if IE]>
+<style type="text/css"> 
+/* place css fixes for all versions of IE in this conditional comment */
+.twoColElsLtHdr #sidebar1 { padding-top: 30px; }
+.twoColElsLtHdr #mainContent { zoom: 1; padding-top: 15px; }
+/* the above proprietary zoom property gives IE the hasLayout it needs to avoid several bugs */
+</style>
+<![endif]-->
+<style type="text/css">
+<!--
+body {
+	background-color: #069;
+}
+a {
+	font-size: 16px;
+	color: #000;
+	font-weight: bold;
+}
+a:link {
+	text-decoration: none;
+	color: #06C;
+}
+a:visited {
+	text-decoration: none;
+	color: #000;
+}
+a:hover {
+	text-decoration: none;
+	color: #F00;
+}
+a:active {
+	text-decoration: none;
+	color: #F00;
+}
+-->
+</style></head>
+
+<body class="twoColElsLtHdr">
+
+<div id="container"><div id="header">
+  <h2 align="center">HThalesAdaptor v 0.1</h2>
+  <h2 align="center">Java Thales Host Security Module (HSM) Library</h2>
+  <p align="center">for Payment Systems and bank Interchange message</p>
+  <p align="center">PINBLOCK, MAC, CVV, PVV, ZPK, TPK, TAK, LMK</p>
+  <p align="center">&nbsp;</p>
+  <!-- end #header --></div>
+  <div id="sidebar1">
+    <h3>MENU</h3>
+    <ul>
+      <li>
+        <a href="index.html">HThalesAdaptor</a></li>
+    </ul>
+    <p>&nbsp;</p>
+    <ul>
+      <li><a href="doc.html">Documentation</a></li>
+    </ul>
+    <p>&nbsp;</p>
+    <ul>
+      <li><a href="../aboutme.html">About Me</a></li>
+    </ul>
+    <p>&nbsp;</p>
+  </div>
+  <div id="mainContent">
+    <p>&nbsp;</p>
+    <table width="406" border="0">
+      <tr>
+        <td><script src="http://platform.linkedin.com/in.js" type="text/javascript"></script>
+          <script type="IN/Share" data-counter="top"></script></td>
+        <td><div id="fb-root2"></div>
+          <script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script>
+          <fb:like href="http://wwwm-sinergi.com/hairi/hthalesadaptor" send="true" layout="box_count" width="100" show_faces="true" font=""></fb:like></td>
+        <td><g:plusone size="tall"></g:plusone></td>
+      </tr>
+    </table>
+    <p></p>
+    <h1><strong>Documentation</strong></h1>
+    <ol>
+      <li><strong><a href="#installation">Installation</a></strong></li>
+      <li><a href="#Core">Core Components</a></li>
+      <li><strong><a href="#usage">Usage</a>
+        </strong>
+        <ol>
+          <li><strong>Normal Usage</strong></li>
+          <li><strong>HThalesMSg XML definition</strong></li>
+        </ol>
+      </li>
+      <li><strong><a href="#Q2">Q2/JPOSEE Usage</a></strong></li>
+      <li><strong><a href="#PCI">PCI Compliance</a></strong></li>
+      <li><strong><a href="#QMUX">Adaptation for QMUX</a></strong></li>
+      <li><a href="#throughput">Throughput and Multiple Connections</a></li>
+    </ol>
+<p><strong><a name="installation" id="Installation">1. Installation</a></strong></p>
+<p><strong>You can download the precompiled JAR file or the source file, </strong></p>
+<p><strong>If you don't wanna go to the trouble of compiling it, just copy</strong></p>
+<p><strong>HThales.jar somewhere in your classpath directory.</strong></p>
+<p><strong>For Q2/JPOS-EE usage I Think on most of the cases you need to copy the jar file into the lib directory inside the deploy folder(the one where all your Q2 bean xml definition resides.</strong></p>
+<p><em><strong>UPDATE : JPOS Q2 uses a seperate classloader for loading jars in deploy/lib directory.</strong></em></p>
+<p><strong><em>Unfortunately, my HThalesAdaptor.class uses instanceof Operator, so it won't work for Q2 unless you compile the source along with the JPOS module and its all in one jpos-ee.jar</em></strong></p>
+<p>&nbsp;</p>
+<p><strong>And don't forget to copy your Message Definition XML files, to a directory somewhere.</strong></p>
+<p><strong><a name="Core" id="Installation2">2. Core Components</a></strong></p>
+<p><strong>HThalesMsg</strong></p>
+<p>This is the FSDMsg style Thales Racal command parser, with a few added field type and seperator compared to the original FSDMsg, they are</p>
+<p>	Field Type : T</p>
+<p>Represents a Thales KeyScheme+Key </p>
+<p>Length : 16H, 1A+16H/32H/48H</p>
+<p>Supports the keySchemes</p>
+<ul>
+  <li>None/Z<br />
+    Encryption of a single length DES key using ANSI X9.17 methods. Used for encryption of keys under a variant LMK, and can also be used for the import or export of keys.</li>
+  <li>    U<br />
+    Encryption of a double length DES key using the variant method; used for encryption of keys under a variant LMK.<br />
+    </li>
+  <li>T<br />
+    Encryption of a triple length DES key using the variant method; used for encryption of keys under a variant LMK.<br />
+    </li>
+  <li>X<br />
+    Encryption of a double length key using ANSI X9.17 methods; only available for import and export of keys. This mode is enabled within the Configure Security command.<br />
+    </li>
+  <li>Y<br />
+    Encryption of a triple length key using ANSI X9.17 methods; only available for import and export of keys. This mode is enabled within the Configure Security command.</li>
+  </ul>
+<p>the field type T will set lenght to the default lenght specified in the schema definition, until it recieves a keyscheme that overrides it.</p>
+<p>So practically speaking for ZMK keys you use field definitions like</p>
+<p>&lt;field id='zmk' type='T' length='16'/&gt;</p>
+<p>When theres no prefix in front, it assumes a 8 byte, 16 HEXCHAR key</p>
+<p>With specific prefix U,T,X,Y it will automatically select the correct lenght.</p>
+<p>And this is for CVK, since the default is usually 32<br />
+  &lt;field id='cvk' type='T' length='32'/&gt;</p>
+<p>&nbsp;</p>
+<p><em>PS, Adding additional keyscheme for EMV and etc is trivial if you're willing to look at the source</em></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>Field Type O</p>
+<p>For optional data, that may or may not be present, usually used in conjuction with pre separators</p>
+<p>&nbsp;</p>
+<p>Seperator ES</p>
+<p>Gives you a semicolon ';' as a separator</p>
+<p>&nbsp;</p>
+<p>PreSeparators</p>
+<p>Just like a separator, but their placed at the start of the field, usually used with optional data.</p>
+<p>PreSeparator SS 	= ';'</p>
+<p>PreSeparator SP = '%'</p>
+<p>PreSeparator SC = 'X'19'</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><strong>HThalesCore</strong></p>
+<p>Reponsible for creating the request, by looking up the schema definition files in the specified directory and creating connection</p>
+<p>&nbsp;</p>
+<p><strong>HThalesAdaptor</strong></p>
+<p>A Q2ChannelAdaptor like component that if you use a JPOS Q2 architecture will take care of keeping the connection alive and uses Java Spaces.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><strong><a name="usage" id="Usage">3. Usage</a></strong></p>
+    <p><strong>For normal usage, use code like</strong></p>
+    <div class="thalescode">
+      <p><strong>import net.hairi.Thales.*;<br />
+      </strong></p>
+      <p><strong>.................... </strong></p>
+      <p>&nbsp;</p>
+      <p><strong><em>//Function parameters String hostname, int port, String basepath, String schema</em></strong></p>
+      <p><strong><em>//basepath is where you store all your HThalesMsg schema xml definition file</em></strong></p>
+      <p><strong>HThalesCore core = new HThalesCore(&quot;localhost&quot;,  1234,&quot;cfg/hsm-&quot;, &quot;base&quot;);</strong></p>
+      <p>&nbsp;</p>
+      <p><strong>HThalesMsg req = core.generateDoubleLengthKey();<br />
+      </strong></p>
+      <p><strong>try {</strong></p>
+      <p>   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>core.connect();</strong></p>
+      <p>		<strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HThalesMsg rep = core.comand(req); </strong></p>
+      <p><strong>} catch (Exception e) { .. }<br />
+      </strong></p>
+    </div>
+    <p>&nbsp;</p>
+    <p><strong>I've implemented some HSM commands in the HThalesCore as a reference guide, when you're creating your own commands with definition files your code will probably look like</strong></p>
+    <p><strong>Thales JC message for PINBLOCK </strong></p>
+    <div class="thalescode">
+      <p>.........................</p>
+      <p><strong>HThalesMsg req3 = core.createRequest(&quot;JC&quot;);</strong></p>
+      <p><strong>req3.set(&quot;source-tpk&quot;, &quot;U8463435FC4B4DAA0C49025272C29B12C&quot;);<br />
+        req3.set(&quot;pin-block&quot;, &quot;028DCC093FB0471F&quot;);<br />
+        req3.set(&quot;pin-block-format&quot;, &quot;03&quot;);<br />
+        req3.set(&quot;account-number&quot;, &quot;407000025321&quot;);</strong></p>
+      <p><strong>try {</strong></p>
+      <p> <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HThalesMsg rep = core.command(req); </strong></p>
+      <p><strong>} catch (Exception e) { .. }<br />
+      </strong></p>
+<p>&nbsp;</p>
+    </div>
+    <p><strong>With message definition like</strong></p>
+    <p><strong>File : hsm-JC.xml</strong></p>
+    <div class="thalescode">
+      <p>&lt;?xml version='1.0' encoding='UTF-8'?&gt;<br />
+        &lt;schema id='JC'&gt;<br />
+        &lt;field id='source-tpk' type='T' length='32'/&gt;  <br />
+        &lt;field id='pin-block' type='A' length='16'/&gt;<br />
+        &lt;field id='pin-block-format' type='A' length='2'/&gt;<br />
+        &lt;field id='account-number' type='A' length='12'/&gt;<br />
+      &lt;/schema&gt; </p>
+</div>
+    <p>&nbsp;</p>
+    <p><strong>And the corresponding response definition</strong></p>
+    <p><strong>File : hsm-resp-JD.xml</strong></p>
+    <div class="thalescode">
+      <p><strong>&lt;?xml version='1.0' encoding='UTF-8'?&gt;<br />
+        &lt;schema id='JD'&gt;<br />
+        &lt;field id='PIN' type='A' length='5'/&gt;<br />
+      &lt;/schema&gt;    </strong></p>
+    </div>
+    <p><strong>So .....</strong></p>
+    <p><strong>When you need to implement a new command, just prepare the FSD defintion file.</strong></p>
+    <p>Here is another example that makes use of the optional data field and preseparators</p>
+    <p><strong>File : hsm-DW.xml</strong></p>
+    <div class="thalescode">
+      <p>&lt;?xml version='1.0' encoding='UTF-8'?&gt;<br />
+        &lt;schema id='DW'&gt;<br />
+        &lt;field id='zmk' type='T' length='32'/&gt;<br />
+        &lt;field id='cvk' type='T' length='32'/&gt;<br />
+        &lt;field id='optiondata' type='OSS' length='3'/&gt;<br />
+        &lt;field id='trailerdata' type='OSC' length='10'/&gt;<br />
+        &lt;/schema&gt; <br />
+      </p>
+    </div>
+    <p>&nbsp;</p>
+    <p><strong>File : hsm-DX.xml</strong></p>
+    <div class="thalescode">
+      <p>&lt;?xml version='1.0' encoding='UTF-8'?&gt;<br />
+        &lt;schema id='DX'&gt;<br />
+        &lt;field id='bdk' type='T' length='32'/&gt;<br />
+        &lt;field id='kcv' type='AEOF' length='12'/&gt;<br />
+      &lt;/schema&gt; </p>
+    </div>
+    <p></p>
+<p>With code like</p>
+<div class="thalescode">
+  <p>......................</p>
+  <p>HThalesMsg req = core.createRequest(&quot;DW&quot;);</p>
+  <p>req.set(&quot;zmk&quot;, &quot;U1457FF6ADF6250C66C368416B4C9D383&quot;);<br />
+    req.set(&quot;cvk&quot;, &quot;6A2C67C227784BC5D8508B6BED82ECB8&quot;);<br />
+    req.set(&quot;optiondata&quot;,&quot;0U1&quot;);<br />
+    req.set(&quot;trailerdata&quot;,&quot;1234567890&quot;);</p>
+  <p><strong>try {</strong></p>
+  <p> <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>&nbsp;<strong>core.connect();</strong></p>
+  <p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HThalesMsg rep = core.command(req); </strong></p>
+  <p><strong>} catch (Exception e) { .. }<br />
+  </strong></p>
+  <p></p>
+</div>
+<p>&nbsp;</p>
+    <p>&nbsp;</p>
+<p><strong>Thread Safety and Concurency</strong></p>
+    <p>Unlike ISO8583 switching host that sometimes route messages to other far flung host, and messages response can arrive in different order;</p>
+    <p>I'm pretty sure that Thales HSM RG series process incoming messages synchroniously FIFO(First In First Out),</p>
+    <p>Just add a <strong>synchronized</strong> keyword/block in your code, and it should be fine.</p>
+    <p>&nbsp;</p>
+    <p><strong>Variable Length Field</strong></p>
+    <p>When dealing with variable lenght fields, just browse the schema definition example so that you can implement the proper one for your needs.</p>
+    <p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><a name="Q2" id="interface">4. Q2/JPOS EE Usage</a></p>
+<p>For Q2 we have the HThalesAdaptor Q2 Bean, with xml deployment like this</p>
+<div class="thalescode">
+  <p>&lt;?xml version=&quot;1.0&quot; ?&gt;</p>
+  <p>&lt;HThales-adaptor name='thales-adaptor'<br />
+    class=&quot;net.hairi.Thales.HThalesAdaptor&quot; logger=&quot;Q2&quot;&gt;<br />
+  &lt;host&gt;hsmhostt&lt;/host&gt;<br />
+  &lt;port&gt;9998&lt;/port&gt;<br />
+  &lt;keep-alive&gt;yes&lt;/keep-alive&gt;<br />
+  &lt;keep-alive-interval&gt;10000&lt;/keep-alive-interval&gt;</p>
+  <p> &lt;basepath&gt;cfg/hsm-&lt;/basepath&gt;<br />
+  &lt;in&gt;hthales-send&lt;/in&gt;<br />
+  &lt;out&gt;hthales-receive&lt;/out&gt;<br />
+  &lt;reconnect-delay&gt;10000&lt;/reconnect-delay&gt;<br />
+  &lt;/HThales-adaptor&gt;<br />
+  </p>
+</div>
+<p>You cand send message like </p>
+<div class="thalescode">
+  <p>&nbsp;</p>
+  <p> Space sp = SpaceFactory.getSpace();</p>
+  <p>HThalesMsg req4 = core.createRequest(&quot;DG&quot;);</p>
+  <p>req4.set(&quot;pvk-pair&quot;, &quot;UA8B1520E201412938388191885FFA50A&quot;);<br />
+    req4.set(&quot;pin&quot;, &quot;01234&quot;);<br />
+    req4.set(&quot;account-number&quot;, &quot;407000025321&quot;);<br />
+    req4.set(&quot;pvki&quot;, &quot;1&quot;);</p>
+  <p></p>
+  <p>sp.out(&quot;hthales-send&quot;, req4);<br />
+  </p>
+  <p>HThalesMsg resp4 = sp.in(&quot;hthales-receive&quot;, 10000);<br />
+  </p>
+  <p><br />
+  </p>
+</div>
+<p>Or to ensure thread safety wrap it under TSpace</p>
+<div class="thalescode">
+  <p> Space sp = SpaceFactory.getSpace();</p>
+  <p>TSpace ts = new TSpace();</p>
+  <p>HThalesMsg req4 = core.createRequest(&quot;DG&quot;);</p>
+  <p>req4.set(&quot;pvk-pair&quot;, &quot;UA8B1520E201412938388191885FFA50A&quot;);<br />
+    req4.set(&quot;pin&quot;, &quot;01234&quot;);<br />
+    req4.set(&quot;account-number&quot;, &quot;407000025321&quot;);<br />
+    req4.set(&quot;pvki&quot;, &quot;1&quot;);</p>
+  <p>ts.out (&quot;Request&quot;, req4);</p>
+  <p>sp.out(&quot;hthales-send&quot;, ts);<br />
+  </p>
+  <p>HThalesMsg resp = ts.in (&quot;Response&quot;, 10000);<br />
+  </p>
+  <p><br />
+</p>
+</div>
+<p>The HThalesAdaptor accepts both FSDMsg and TSpace input into its in space.</p>
+<p>JMX is supported, so you can manage it via the JMX console for some cool stuff.</p>
+<p><a name="PCI" id="interface3">5. PCI Compliance</a></p>
+<p>I think HThalesAdaptor should be PCI compliant.</p>
+<p>The thing is, last time I checked TSpace and JPOS default space implementation doesn't serialize to disk. I don't know if that has changed.</p>
+<p>Why does this matter ?, because PCI forbid any sensitive info stored in permanant media.</p>
+<p>If it does, you need to wrap your request to other Java space implementation</p>
+<p></p>
+<p><a name="QMUX" id="interface4">6. QMUX and Thales Racal Message Trailer</a></p>
+<p>No, you can't currently wrap HThalesAdaptor in a Qmux, I don't see any hard requirements for it. However since a few of you in JPOS mailing list insist on using it, my tip is, just recast FSDMsg to FSDISOMsg, and send it over the wire.</p>
+<p>Add FSDISOMsg handling to HThales adaptor space input, and don't forget</p>
+<p>in your FSD XML definition every last field should use the FS type, so that JPOS will ad 1C after it, after that add in the field &quot;11&quot; and &quot;41&quot; which the QMux uses.</p>
+<p><a name="throughput" id="interface2">7. Throughput</a></p>
+<p>Right, to get the max rated troughput on your Thales HSM you usually need to have multiple connections.</p>
+<p>Luckily Java Space and JPOS Q2 provides a very straightforward way to do this.</p>
+<p>Create 2 deployment descriptor for HThalesAdaptor with different name attribute, referencing to the same in/out space</p>
+<p>&nbsp;</p>
+<div class="thalescode">
+  <p>&lt;?xml version=&quot;1.0&quot; ?&gt;</p>
+  <p>&lt;HThales-adaptor name='thales-adaptor1'<br />
+    class=&quot;net.hairi.Thales.HThalesAdaptor&quot; logger=&quot;Q2&quot;&gt;<br />
+    &lt;host&gt;hsmhostt&lt;/host&gt;<br />
+    &lt;port&gt;9998&lt;/port&gt;<br />
+    &lt;keep-alive&gt;yes&lt;/keep-alive&gt;<br />
+    &lt;keep-alive-interval&gt;10000&lt;/keep-alive-interval&gt;</p>
+  <p> &lt;basepath&gt;cfg/hsm-&lt;/basepath&gt;<br />
+    &lt;in&gt;hthales-send&lt;/in&gt;<br />
+    &lt;out&gt;hthales-receive&lt;/out&gt;<br />
+    &lt;reconnect-delay&gt;10000&lt;/reconnect-delay&gt;<br />
+    &lt;/HThales-adaptor&gt;<br />
+  </p>
+</div>
+<p></p>
+<p>&nbsp;</p>
+<div class="thalescode">
+  <p>&lt;?xml version=&quot;1.0&quot; ?&gt;</p>
+  <p>&lt;HThales-adaptor name='thales-adaptor2'<br />
+    class=&quot;net.hairi.Thales.HThalesAdaptor&quot; logger=&quot;Q2&quot;&gt;<br />
+    &lt;host&gt;hsmhostt&lt;/host&gt;<br />
+    &lt;port&gt;9998&lt;/port&gt;<br />
+    &lt;keep-alive&gt;yes&lt;/keep-alive&gt;<br />
+    &lt;keep-alive-interval&gt;10000&lt;/keep-alive-interval&gt;</p>
+  <p> &lt;basepath&gt;cfg/hsm-&lt;/basepath&gt;<br />
+    &lt;in&gt;hthales-send&lt;/in&gt;<br />
+    &lt;out&gt;hthales-receive&lt;/out&gt;<br />
+    &lt;reconnect-delay&gt;10000&lt;/reconnect-delay&gt;<br />
+    &lt;/HThales-adaptor&gt;<br />
+  </p>
+</div>
+<p></p>
+<p>And just send it through space.</p>
+<p>&nbsp;</p>
+<div class="thalescode">
+  <p> Space sp = SpaceFactory.getSpace();</p>
+  <p>TSpace ts = new TSpace();</p>
+  <p>HThalesMsg req4 = core.createRequest(&quot;DG&quot;);</p>
+  <p>req4.set(&quot;pvk-pair&quot;, &quot;UA8B1520E201412938388191885FFA50A&quot;);<br />
+    req4.set(&quot;pin&quot;, &quot;01234&quot;);<br />
+    req4.set(&quot;account-number&quot;, &quot;407000025321&quot;);<br />
+    req4.set(&quot;pvki&quot;, &quot;1&quot;);</p>
+  <p>ts.out (&quot;Request&quot;, req4);</p>
+  <p>sp.out(&quot;hthales-send&quot;, ts);<br />
+  </p>
+  <p>HThalesMsg resp = ts.in (&quot;Response&quot;, 10000);<br />
+  </p>
+  <p><br />
+  </p>
+</div>
+<p></p>
+<p>Problem solved.</p>
+<p>The Space will do the balancing automatically for you.</p>
+<p>&nbsp;</p>
+<p></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<table width="406" border="0">
+  <tr>
+    <td><script src="http://platform.linkedin.com/in.js" type="text/javascript"></script>
+      <script type="IN/Share" data-counter="top"></script></td>
+    <td><div id="fb-root"></div>
+      <script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script>
+      <fb:like href="http://wwwm-sinergi.com/hairi/hthalesadaptor" send="true" layout="box_count" width="100" show_faces="true" font=""></fb:like></td>
+    <td><g:plusone></g:plusone></td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p></p>
+    <p><br class="clearfloat" />
+    </p>
+  </div>
+  <div id="footer">
+    <p><strong><em>Copyright Hairi Abass 2011</em></strong></p>
+  <!-- end #footer --></div>
+<!-- end #container --></div>
+</body>
+</html>

@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<schema id='DZ'>
+<field id='bdk' type='T' length='32'/>
+<field id='kcv' type='A' length='6'/>
+</schema> 

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema id='AW'>
+<!--this is the LMK check value-->
+<field id="zmk" type="T" length="16" />
+<field id="cvk" type="T" length="32" />
+<field id="optiondata" type="OSS" length="3" />
+</schema>

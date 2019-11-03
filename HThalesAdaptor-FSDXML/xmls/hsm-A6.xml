@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<schema id='A6'>
+<field id='key-type' type='A' length='3'/>
+<!--this is the Thales KeyType in action-->
+<field id='zmk' type='T' length='16'/>
+<field id='key-under-zmk' type='T' length='16'/>
+<field id='key-scheme' type='A' length='1'/>
+</schema> 
